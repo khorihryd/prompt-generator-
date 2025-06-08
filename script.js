@@ -6,13 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiKeyError = document.getElementById('apiKeyError');
     const cancelApiKeyBtn = document.getElementById('cancelApiKeyBtn');
 
-    // Kontainer utama aplikasi
-    const appContainer = document.getElementById('appContainer');
-    // Konten Generator (form dan hasil)
-    const generatorContent = document.getElementById('generatorContent');
-    // Konten History
-    const historyContent = document.getElementById('historyContent');
-    const historyList = document.getElementById('historyList');
+    const appContainer = document.getElementById('appContainer'); // Kontainer utama untuk Generator dan History
+    const generatorContent = document.getElementById('generatorContent'); // Konten Generator (form dan hasil)
+    const historyContent = document.getElementById('historyContent'); // Konten History
+    const historyList = document.getElementById('historyList'); // Tempat daftar riwayat
 
     const loadingOverlay = document.getElementById('loadingOverlay');
     const settingsBtn = document.getElementById('settingsBtn');
@@ -30,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const subjectInput = document.getElementById('subject');
     const actionInput = document.getElementById('action');
-    const expressionInput = document.getElementById('expression');
+    const expressionInput = document = document.getElementById('expression');
     const placeInput = document.getElementById('place');
     const timeSelect = document.getElementById('time');
     const cameraMovementSelect = document.getElementById('cameraMovement');
@@ -43,6 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=`;
     const HISTORY_KEY = 'veo3_prompt_history'; // Kunci untuk localStorage history
+
+    // --- Elemen Footer (untuk update tahun) ---
+    const currentYearSpan = document.getElementById('currentYear');
+
 
     // --- Inisialisasi Awal: Pastikan semua elemen UI dalam kondisi tersembunyi yang benar ---
     loadingOverlay.classList.add('hidden');
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     apiKeyModal.classList.remove('hidden');
                     apiKeyModal.classList.add('open');
                     cancelApiKeyBtn.classList.add('hidden');
-                    apiKeyError.textContent = "API Key diperlukan untuk melanjutkan."; // Tambahkan pesan ini
+                    apiKeyError.textContent = "API Key diperlukan untuk melanjutkan.";
                     apiKeyError.classList.remove('hidden');
                     console.log('API Key tidak valid/kosong. Modal tetap terbuka.');
                     return; // Hentikan eksekusi selanjutnya untuk mencegah penutupan
@@ -369,21 +370,21 @@ document.addEventListener('DOMContentLoaded', () => {
         historyList.innerHTML = ''; // Bersihkan daftar sebelumnya
 
         if (history.length === 0) {
-            historyList.innerHTML = '<p class="text-center text-gray-500" id="emptyHistoryMessage">Riwayat prompt masih kosong.</p>';
+            historyList.innerHTML = '<p class="empty-message" id="emptyHistoryMessage">Riwayat prompt masih kosong.</p>';
             return;
         }
 
         history.forEach(entry => {
             const historyItem = document.createElement('div');
-            historyItem.classList.add('history-item', 'mb-4', 'rounded-lg', 'p-4', 'shadow-sm', 'border', 'border-gray-200');
+            historyItem.classList.add('history-item');
 
             historyItem.innerHTML = `
-                <div class="flex justify-between items-center mb-2">
-                    <p class="text-sm text-gray-500">${entry.date}</p>
-                    <button class="copy-history-prompt-btn bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded-md transition-colors duration-200"
+                <div class="history-item-header">
+                    <p class="history-item-date">${entry.date}</p>
+                    <button class="copy-history-prompt-btn"
                             data-prompt="${encodeURIComponent(entry.english)}">Copy</button>
                 </div>
-                <p class="text-gray-800 break-words">${entry.english}</p>
+                <p class="history-item-prompt-text">${entry.english}</p>
             `;
             historyList.appendChild(historyItem);
         });
@@ -471,5 +472,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // === Inisialisasi Aplikasi ===
+    // Update tahun saat ini di footer
+    if (currentYearSpan) {
+        currentYearSpan.textContent = new Date().getFullYear();
+    }
+    
     checkInitialApiKey();
 });
