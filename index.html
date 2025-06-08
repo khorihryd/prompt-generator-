@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Generator Veo 3 from KodeAura</title>
+
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Overlay Loading -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <span>Memuat...</span>
+    </div>
+
+    <!-- Modal API Key -->
+    <div id="apiKeyModal" class="api-key-modal hidden">
+        <div class="modal-content">
+            <h2 class="modal-title">Masukkan API Key Gemini Anda</h2>
+            <p class="modal-description">
+                Untuk menggunakan generator prompt ini, Anda perlu memasukkan API Key Gemini yang valid.
+                API Key akan disimpan dengan aman di browser Anda (Local Storage) dan tidak akan dikirim ke server manapun.
+            </p>
+            <div class="input-group">
+                <label for="geminiApiKey" class="input-label">API Key Gemini:</label>
+                <input type="password" id="geminiApiKey" placeholder="AIzaSyC..." class="input-field">
+            </div>
+            <div id="apiKeyError" class="api-key-error hidden"></div>
+            <div class="modal-actions">
+                <button id="cancelApiKeyBtn" class="button button-tertiary hidden">Batal</button>
+                <button id="saveApiKeyBtn" class="button button-primary grow">Simpan API Key</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigasi Bar -->
+    <nav class="navbar fixed-top">
+        <div class="container navbar-container">
+            <!-- Logo KODEAURA -->
+            <div class="logo">
+                <span class="logo-kode">KODE</span><span class="logo-aura" style="color: #44DA2F;">AURA</span>
+            </div>
+            <!-- Tombol Settings -->
+            <button id="settingsBtn" class="button button-secondary button-settings">
+                <!-- SVG Icon Gear (Cog) -->
+                <svg class="icon-settings" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.573.35.91.854 1.065 1.066z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                Settings
+            </button>
+        </div>
+    </nav>
+
+    <!-- Tabs Container Below Navbar -->
+    <div id="tabContainer" class="container tab-container">
+        <div class="tab-buttons-wrapper">
+            <button id="generatorTabBtn" class="tab-button active">Generator</button>
+            <button id="historyTabBtn" class="tab-button">History</button>
+        </div>
+    </div>
+
+    <!-- Main Application Content Container -->
+    <div id="appContainer" class="container app-content-wrapper">
+        <!-- Generator Content Section -->
+        <div id="generatorContent" class="content-section">
+            <h1 class="main-title">Prompt Generator <span class="text-blue">Veo 3</span>
+                <span class="subtitle">from KodeAura</span>
+            </h1>
+            <p class="description-text">
+                Ciptakan prompt text-to-video yang detail dan sinematik untuk Veo 3 hanya dengan beberapa input.
+            </p>
+
+            <!-- Form Input Prompt -->
+            <div class="form-grid">
+                <div class="input-group">
+                    <label for="subject" class="input-label">Subjek:</label>
+                    <input type="text" id="subject" placeholder="Contoh: seekor kucing oranye" class="input-field">
+                </div>
+                <div class="input-group">
+                    <label for="action" class="input-label">Aksi:</label>
+                    <input type="text" id="action" placeholder="Contoh: bermain dengan gulungan benang" class="input-field">
+                </div>
+                <div class="input-group">
+                    <label for="expression" class="input-label">Ekspresi:</label>
+                    <input type="text" id="expression" placeholder="Contoh: dengan ekspresi penasaran" class="input-field">
+                </div>
+                <div class="input-group">
+                    <label for="place" class="input-label">Tempat:</label>
+                    <input type="text" id="place" placeholder="Contoh: di ruang tamu yang nyaman" class="input-field">
+                </div>
+                <div class="input-group">
+                    <label for="time" class="input-label">Waktu:</label>
+                    <select id="time" class="input-field">
+                        <option value="">Pilih Waktu</option>
+                        <option value="pagi hari">Pagi Hari</option>
+                        <option value="siang hari">Siang Hari</option>
+                        <option value="sore hari">Sore Hari</option>
+                        <option value="malam hari">Malam Hari</option>
+                        <option value="fajar">Fajar (Dawn)</option>
+                        <option value="senja">Senja (Dusk)</option>
+                        <option value="tengah malam">Tengah Malam (Midnight)</option>
+                        <option value="tengah hari">Tengah Hari (Midday)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="cameraMovement" class="input-label">Gerakan Kamera:</label>
+                    <select id="cameraMovement" class="input-field">
+                        <option value="">Pilih Gerakan Kamera</option>
+                        <option value="Static (Statik)">Static (Statik)</option>
+                        <option value="Pan (Geser Horizontal)">Pan (Geser Horizontal)</option>
+                        <option value="Tilt (Geser Vertikal)">Tilt (Geser Vertikal)</option>
+                        <option value="Zoom In (Perbesar)">Zoom In (Perbesar)</option>
+                        <option value="Zoom Out (Perkecil)">Zoom Out (Perkecil)</option>
+                        <option value="Dolly In (Maju Mendekat)">Dolly In (Maju Mendekat)</option>
+                        <option value="Dolly Out (Mundur Menjauh)">Dolly Out (Mundur Menjauh)</option>
+                        <option value="Tracking Shot (Mengikuti Objek)">Tracking Shot (Mengikuti Objek)</option>
+                        <option value="Crane Shot (Angkat/Turun Vertikal)">Crane Shot (Angkat/Turun Vertikal)</option>
+                        <option value="Handheld (Genggam Tangan)">Handheld (Genggam Tangan)</option>
+                        <option value="Steadicam (Stabil)">Steadicam (Stabil)</option>
+                        <option value="Drone Shot (Dari Drone)">Drone Shot (Dari Drone)</option>
+                        <option value="Arc Shot (Melengkung Mengelilingi)">Arc Shot (Melengkung Mengelilingi)</option>
+                        <option value="Dutch Angle (Sudut Miring)">Dutch Angle (Sudut Miring)</option>
+                        <option value="POV (Point of View)">POV (Point of View)</option>
+                        <option value="3D Rotation (Rotasi 3D)">3D Rotation (Rotasi 3D)</option>
+                        <option value="Circle Dolly (Dolly Lingkar)">Circle Dolly (Dolly Lingkar)</option>
+                        <option value="Dolly Zoom (Efek Vertigo)">Dolly Zoom (Efek Vertigo)</option>
+                        <option value="Dutch Tilt (Miring Belanda)">Dutch Tilt (Miring Belanda)</option>
+                        <option value="Forward Glide (Meluncur Maju)">Forward Glide (Meluncur Maju)</option>
+                        <option value="Hyperlapse (Hiperlaps)">Hyperlapse (Hiperlaps)</option>
+                        <option value="Lateral Glide (Meluncur Samping)">Lateral Glide (Meluncur Samping)</option>
+                        <option value="Look Around (Lihat Sekeliling)">Look Around (Lihat Sekeliling)</option>
+                        <option value="Push In (Dorong Masuk)">Push In (Dorong Masuk)</option>
+                        <option value="Reverse Dolly (Dolly Mundur)">Reverse Dolly (Dolly Mundur)</option>
+                        <option value="Rising (Menaik)">Rising (Menaik)</option>
+                        <option value="Side to Side Pan (Geser Samping ke Samping)">Side to Side Pan (Geser Samping ke Samping)</option>
+                        <option value="Spiral (Spiral)">Spiral (Spiral)</option>
+                        <option value="Top Down (Dari Atas ke Bawah)">Top Down (Dari Atas ke Bawah)</option>
+                        <option value="Track In (Lacak Masuk)">Track In (Lacak Masuk)</option>
+                        <option value="Track Out (Lacak Keluar)">Track Out (Lacak Keluar)</option>
+                        <option value="Truck Left (Geser Kiri)">Truck Left (Geser Kiri)</option>
+                        <option value="Truck Right (Geser Kanan)">Truck Right (Geser Kanan)</option>
+                        <option value="Twist (Putar)">Twist (Putar)</option>
+                        <option value="Upward Arc (Busur ke Atas)">Upward Arc (Busur ke Atas)</option>
+                        <option value="Vertical Dolly (Dolly Vertikal)">Vertical Dolly (Dolly Vertikal)</option>
+                        <option value="Warp (Melengkung)">Warp (Melengkung)</option>
+                        <option value="Wobble (Goyangan)">Wobble (Goyangan)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="lighting" class="input-label">Pencahayaan:</label>
+                    <select id="lighting" class="input-field">
+                        <option value="">Pilih Pencahayaan</option>
+                        <option value="Natural light (Cahaya Alami)">Natural light (Cahaya Alami)</option>
+                        <option value="Soft lighting (Pencahayaan Lembut)">Soft lighting (Pencahayaan Lembut)</option>
+                        <option value="Harsh lighting (Pencahayaan Keras)">Harsh lighting (Pencahayaan Keras)</option>
+                        <option value="Dramatic lighting (Pencahayaan Dramatis)">Dramatic lighting (Pencahayaan Dramatis)</option>
+                        <option value="Backlight (Cahaya Belakang)">Backlight (Cahaya Belakang)</option>
+                        <option value="Low key lighting (Pencahayaan Redup)">Low key lighting (Pencahayaan Redup)</option>
+                        <option value="High key lighting (Pencahayaan Terang)">High key lighting (Pencahayaan Terang)</option>
+                        <option value="Neon lighting (Pencahayaan Neon)">Neon lighting (Pencahayaan Neon)</option>
+                        <option value="Candlelight (Cahaya Lilin)">Candlelight (Cahaya Lilin)</option>
+                        <option value="Golden hour (Jam Emas)">Golden hour (Jam Emas)</option>
+                        <option value="Blue hour (Jam Biru)">Blue hour (Jam Biru)</option>
+                        <option value="Studio lighting (Pencahayaan Studio)">Studio lighting (Pencahayaan Studio)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="videoStyle" class="input-label">Gaya Video:</label>
+                    <select id="videoStyle" class="input-field">
+                        <option value="">Pilih Gaya Video</option>
+                        <option value="Realistic (Realistis)">Realistic (Realistis)</option>
+                        <option value="Cinematic (Sinematik)">Cinematic (Sinematik)</option>
+                        <option value="Anime (Anime)">Anime (Anime)</option>
+                        <option value="Cartoon (Kartun)">Cartoon (Kartun)</option>
+                        <option value="Vlog (Vlog)">Vlog (Vlog)</option>
+                        <option value="Documentary (Dokumenter)">Documentary (Dokumenter)</option>
+                        <option value="Fantasy (Fantasi)">Fantasy (Fantasi)</option>
+                        <option value="Sci-fi (Fiksi Ilmiah)">Sci-fi (Fiksi Ilmiah)</option>
+                        <option value="Horror (Horor)">Horror (Horor)</option>
+                        <option value="Action (Aksi)">Action (Aksi)</option>
+                        <option value="Comedy (Komedi)">Comedy (Komedi)</option>
+                        <option value="Vintage (Antik)">Vintage (Antik)</option>
+                        <option value="Futuristic (Futuristik)">Futuristic (Futuristik)</option>
+                        <option value="Abstract (Abstrak)">Abstract (Abstrak)</option>
+                        <option value="Stop Motion (Gerak Henti)">Stop Motion (Gerak Henti)</option>
+                        <option value="Hyperrealistic (Hiperrealistis)">Hyperrealistic (Hiperrealistis)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="videoMood" class="input-label">Suasana Video:</label>
+                    <select id="videoMood" class="input-field">
+                        <option value="">Pilih Suasana Video</option>
+                        <option value="Happy (Bahagia)">Happy (Bahagia)</option>
+                        <option value="Sad (Sedih)">Sad (Sedih)</option>
+                        <option value="Exciting (Mengejutkan)">Exciting (Mengejutkan)</option>
+                        <option value="Peaceful (Damai)">Peaceful (Damai)</option>
+                        <option value="Tense (Tegang)">Tense (Tegang)</option>
+                        <option value="Mysterious (Misterius)">Mysterious (Misterius)</option>
+                        <option value="Romantic (Romantis)">Romantic (Romantis)</option>
+                        <option value="Epic (Epik)">Epic (Epik)</option>
+                        <option value="Dreamy (Mimpi)">Mimpi (Dreamy)</option>
+                        <option value="Gloomy (Suram)">Gloomy (Suram)</option>
+                        <option value="Inspiring (Menginspirasi)">Inspiring (Menginspirasi)</option>
+                        <option value="Funny (Lucu)">Funny (Lucu)</option>
+                        <option value="Serene (Tenang)">Serene (Tenang)</option>
+                        <option value="Energetic (Energik)">Energetic (Energetic)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="soundMusic" class="input-label">Suara atau Musik:</label>
+                    <input type="text" id="soundMusic" placeholder="Contoh: musik orkestra megah, suara riak air" class="input-field">
+                </div>
+                <div class="input-group grid-span-2">
+                    <label for="spokenSentence" class="input-label">Kalimat yang Diucapkan (Opsional):</label>
+                    <textarea id="spokenSentence" rows="2" placeholder="Contoh: 'Ini adalah langkah kecil bagi manusia, lompatan besar bagi umat manusia.'" class="input-field"></textarea>
+                </div>
+                <div class="input-group grid-span-2">
+                    <label for="additionalDetails" class="input-label">Detail Tambahan (misal: gaya artis, resolusi, aspek rasio):</label>
+                    <textarea id="additionalDetails" rows="3" placeholder="Contoh: Gaya seni digital, 4K, aspek rasio 16:9, warna cerah" class="input-field"></textarea>
+                </div>
+            </div>
+
+            <button id="generatePromptBtn" class="button button-primary button-full-width">Buat Prompt</button>
+
+            <div id="promptOutput" class="prompt-output-container hidden">
+                <h2 class="section-title">Hasil Prompt Anda</h2>
+                <div class="output-grid">
+                    <div>
+                        <h3 class="output-subtitle">Prompt Bahasa Indonesia (Bisa Diedit)</h3>
+                        <textarea id="indonesianPrompt" class="prompt-column editable-prompt" placeholder="Hasil prompt akan ditampilkan di sini."></textarea>
+                        <button id="copyIndonesianPromptBtn" class="button button-secondary button-full-width">Copy Prompt Bahasa Indonesia</button>
+                    </div>
+                    <div>
+                        <h3 class="output-subtitle">Final Prompt Bahasa Inggris</h3>
+                        <textarea id="englishPrompt" class="prompt-column read-only-prompt" readonly placeholder="Hasil prompt akan ditampilkan di sini."></textarea>
+                        <button id="copyEnglishPromptBtn" class="button button-secondary button-full-width">Copy Prompt Bahasa Inggris</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Content Section -->
+        <div id="historyContent" class="content-section hidden">
+            <h2 class="main-title">History Prompt</h2>
+            <div id="historyList" class="history-list-wrapper">
+                <!-- History items will be dynamically inserted here by JavaScript -->
+                <p class="empty-message" id="emptyHistoryMessage">Riwayat prompt masih kosong.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <p class="footer-text">&copy; <span id="currentYear"></span> KodeAura</p>
+            <p class="footer-text">Version 1.0</p>
+            <div class="social-links">
+                <a href="https://www.tiktok.com/@kodeaura" target="_blank" rel="noopener noreferrer" class="social-link">TikTok</a>
+                <a href="https://www.youtube.com/@kodeaura" target="_blank" rel="noopener noreferrer" class="social-link">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
