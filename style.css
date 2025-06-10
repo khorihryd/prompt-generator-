@@ -323,10 +323,10 @@ body {
 
 /* Style untuk ikon kopi PNG */
 .icon-coffee {
-    width: 1.25rem; /* Menyesuaikan ukuran ikon */
-    height: 1.25rem;
+    width: 1.5rem; /* Ukuran ikon kopi sedikit lebih besar agar jelas */
+    height: 1.5rem;
     margin-right: 0.25rem; /* Jarak antara ikon dan teks */
-    /* Warna ikon akan ditentukan oleh gambar PNG itu sendiri, tidak perlu fill/stroke */
+    vertical-align: middle; /* Memastikan ikon sejajar dengan teks */
 }
 
 
